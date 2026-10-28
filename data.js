@@ -8,6 +8,7 @@
 const DATA = {
   school: "거제공업고등학교",
   updated: "2026-10-28",
+  disclaimer: "학교 사정에 따라 내용이 바뀔 수 있습니다. 정확한 시험 일정은 큐넷(q-net.or.kr)에서 확인하세요.",
 
   // ---------------------------------------------------------------
   // 학과 목록 (학과가 2개 이상이 되면 화면에 학과 선택 버튼이 나타납니다)
@@ -44,7 +45,10 @@ const DATA = {
       grade: 1,
       steps: [
         { sem: 1, cert: "co2", type: "필기", text: "이산화탄소가스아크용접기능사 필기", when: "2회차 (4월)",
-          branches: [{ if: "합격", then: "CO2 실기 준비 + 선체설계 필기 준비" }] },
+          branches: [
+            { if: "합격", then: "CO2 실기 준비 + 선체설계 필기 준비" },
+            { if: "불합격", then: "합격할 때까지 다음 회차 CO2 필기 계속 도전" },
+          ] },
         { sem: 1, cert: "co2", type: "수업·방과후", text: "이산화탄소가스아크용접기능사 실기", when: "필기 합격 후 바로 준비" },
         { sem: 2, cert: "hull-design", type: "필기·실기", text: "선체설계기능사", when: "4회차 (필기 9월 · 실기 11월)",
           branches: [
@@ -106,6 +110,7 @@ const DATA = {
       description: "용접과 학생의 첫 번째 자격증 취득 목표입니다.",
       howto: [
         "입학 후 2회차(4월) 필기시험에 바로 응시",
+        "필기에 떨어지면 합격할 때까지 다음 회차 필기에 계속 도전",
         "필기 합격 후 수업과 방과후로 바로 실기 준비",
         "필기 합격 후에는 선체설계기능사 필기도 함께 준비",
       ],
@@ -282,6 +287,7 @@ const DATA = {
 
   // ---------------------------------------------------------------
   // 기능사 시험 일정 (빈칸은 "" 로 두세요)
+  //  only: 그 회차에만 시험이 있는 종목 (회차 이름 아래에 표시, 없으면 생략)
   // ---------------------------------------------------------------
   examSchedule: {
     title: "2026년 기능사 시험 일정",
@@ -289,10 +295,10 @@ const DATA = {
     note: "정확한 일정은 큐넷(q-net.or.kr)에서 '기능사 시험 일정'으로 확인하세요.",
     rounds: [
       { round: "1회", writtenApply: "", written: "", writtenResult: "", practicalApply: "", practical: "3.14 ~ 4.1", practicalResult: "4.10" },
-      { round: "2회", writtenApply: "3.16 ~ 3.20", written: "4.4 ~ 4.9", writtenResult: "4.22", practicalApply: "4.27 ~ 4.30", practical: "5.30 ~ 6.14", practicalResult: "6.26" },
+      { round: "2회", only: "배관", writtenApply: "3.16 ~ 3.20", written: "4.4 ~ 4.9", writtenResult: "4.22", practicalApply: "4.27 ~ 4.30", practical: "5.30 ~ 6.14", practicalResult: "6.26" },
       { round: "의무검정", writtenNote: "필기시험 면제자 검정 (일반인 필기 면제자 응시 불가)", practicalApply: "5.11 ~ 5.14", practical: "6.13 ~ 6.24", practicalResult: "7.10" },
-      { round: "3회", writtenApply: "6.8 ~ 6.11", written: "6.27 ~ 7.2", writtenResult: "7.15", practicalApply: "7.27 ~ 7.30", practical: "8.29 ~ 9.16", practicalResult: "10.2" },
-      { round: "4회", writtenApply: "8.24 ~ 8.27", written: "9.16 ~ 9.21", writtenResult: "10.7", practicalApply: "10.12 ~ 10.15", practical: "11.14 ~ 12.2", practicalResult: "12.11" },
+      { round: "3회", only: "선체건조", writtenApply: "6.8 ~ 6.11", written: "6.27 ~ 7.2", writtenResult: "7.15", practicalApply: "7.27 ~ 7.30", practical: "8.29 ~ 9.16", practicalResult: "10.2" },
+      { round: "4회", only: "선체설계 · 배관", writtenApply: "8.24 ~ 8.27", written: "9.16 ~ 9.21", writtenResult: "10.7", practicalApply: "10.12 ~ 10.15", practical: "11.14 ~ 12.2", practicalResult: "12.11" },
     ],
   },
 

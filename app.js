@@ -167,7 +167,8 @@ function scheduleHtml() {
     const written = r.writtenNote
       ? `<td colspan="3" class="muted">${esc(r.writtenNote)}</td>`
       : `<td>${esc(r.writtenApply)}</td><td class="hl">${esc(r.written)}</td><td>${esc(r.writtenResult)}</td>`;
-    return `<tr><th>${esc(r.round)}</th>${written}<td>${esc(r.practicalApply)}</td><td class="hl">${esc(r.practical)}</td><td>${esc(r.practicalResult)}</td></tr>`;
+    const only = r.only ? `<div class="only">${esc(r.only)}</div>` : "";
+    return `<tr><th>${esc(r.round)}${only}</th>${written}<td>${esc(r.practicalApply)}</td><td class="hl">${esc(r.practical)}</td><td>${esc(r.practicalResult)}</td></tr>`;
   }).join("");
   return `
     <h4>${esc(s.title)}</h4>
@@ -177,6 +178,7 @@ function scheduleHtml() {
         <tbody>${rows}</tbody>
       </table>
     </div>
+    ${s.rounds.some((r) => r.only) ? `<p class="muted small"><span class="only">종목</span> 회차 아래 표시된 종목은 그 회차에만 시험이 있습니다.</p>` : ""}
     ${s.note ? `<p class="muted small">${esc(s.note)}</p>` : ""}`;
 }
 
@@ -372,6 +374,9 @@ function route() {
 }
 
 document.getElementById("school-name").textContent = DATA.school;
-document.getElementById("foot").textContent = `${DATA.school} · 최종 수정 ${DATA.updated}`;
+document.getElementById("foot").innerHTML =
+  `${DATA.disclaimer ? `<p>${esc(DATA.disclaimer)}</p>` : ""}${esc(DATA.school)} · 최종 수정 ${esc(DATA.updated)}`;
+// 공채 정보가 들어오기 전까지 취업처 탭 숨김
+if (!DATA.companies.length) document.querySelector('.tabs a[data-tab="companies"]')?.remove();
 window.addEventListener("hashchange", route);
 route();

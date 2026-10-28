@@ -251,8 +251,20 @@ a.step:hover { border-color: var(--c); }
 .schedule thead th { background: var(--bg); }
 .schedule td.hl { background: var(--primary-soft); font-weight: 600; }
 .schedule td.muted { white-space: normal; font-size: 13px; }
+.only {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: #fdeee6;
+  color: #c2410c;
+}
+.schedule th .only { display: block; }
 
 .foot { text-align: center; color: var(--muted); font-size: 12px; padding: 24px 16px; }
+.foot p { margin: 0 0 4px; }
 
 @media (max-width: 600px) {
   .roadmap { grid-template-columns: 1fr; }
