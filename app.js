@@ -64,24 +64,73 @@ function mandatoryExamHtml() {
 const typeColor = (type) => (DATA.legend ?? []).find((l) => l.types.includes(type))?.color ?? "gray";
 
 function stepHtml(s) {
+  const branches = (s.branches ?? []).map((b) =>
+    `<li><b>${esc(b.if)}</b> → ${esc(b.then)}</li>`).join("");
   const body = `<span class="step-type">${esc(s.type)}</span><span class="step-text">${esc(s.text)}</span>${
-    s.when ? `<small>${esc(s.when)}</small>` : ""}`;
-  const cls = `step c-${esc(typeColor(s.type))}`;
+    s.when ? `<small>${esc(s.when)}</small>` : ""}${branches ? `<ul class="branches">${branches}</ul>` : ""}`;
+  const cls = `step c-${esc(typeColor(s.type))}${s.optional ? " optional" : ""}`;
   return s.cert && certById(s.cert)
     ? `<a class="${cls}" href="#/certificate/${esc(s.cert)}">${body}</a>`
     : `<div class="${cls}">${body}</div>`;
 }
 
+// ---------------- 다가오는 시험 일정 ----------------
+
+const SCHEDULE_FIELDS = [
+  ["writtenApply", "필기 원서접수"], ["written", "필기시험"], ["writtenResult", "필기 합격발표"],
+  ["practicalApply", "실기 원서접수"], ["practical", "실기시험"], ["practicalResult", "실기 합격발표"],
+];
+
+// "11.14 ~ 12.2" 또는 "4.22" → { start, end }
+function parseRange(text, year) {
+  const parts = String(text ?? "").split("~").map((p) => p.trim().match(/^(\d{1,2})\.(\d{1,2})/)).filter(Boolean);
+  if (!parts.length) return null;
+  const toDate = (m) => new Date(year, Number(m[1]) - 1, Number(m[2]));
+  const start = toDate(parts[0]);
+  const end = toDate(parts[parts.length - 1]);
+  if (end < start) end.setFullYear(year + 1);
+  return { start, end };
+}
+
+function nowBannerHtml() {
+  const s = DATA.examSchedule;
+  if (!s?.year) return "";
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const events = s.rounds.flatMap((r) => SCHEDULE_FIELDS.map(([key, label]) => {
+    const range = parseRange(r[key], s.year);
+    return range && { ...range, label: `${r.round} ${label}`, text: r[key] };
+  })).filter(Boolean).sort((a, b) => a.start - b.start);
+
+  const ongoing = events.filter((e) => e.start <= today && today <= e.end);
+  const upcoming = events.filter((e) => e.start > today).slice(0, ongoing.length ? 1 : 2);
+  if (!ongoing.length && !upcoming.length) return "";
+
+  const dday = (d) => `D-${Math.round((d - today) / 86400000)}`;
+  const rows = [
+    ...ongoing.map((e) => `<li><span class="badge live">진행 중</span>${esc(e.label)} <span class="muted">${esc(e.text)}</span></li>`),
+    ...upcoming.map((e) => `<li><span class="badge">${dday(e.start)}</span>${esc(e.label)} <span class="muted">${esc(e.text)}</span></li>`),
+  ].join("");
+  return `
+    <a class="now card" href="#/guide">
+      <div class="now-title">📌 다가오는 시험 일정</div>
+      <ul>${rows}</ul>
+    </a>`;
+}
+
 function renderRoadmap() {
   const legend = (DATA.legend ?? [])
     .map((l) => `<span class="legend-item c-${esc(l.color)}"><i></i>${esc(l.label)}</span>`).join("");
+  const hasOptional = DATA.roadmap.some((y) => y.steps.some((s) => s.optional));
 
   const grades = DATA.roadmap.map((y) => {
-    const bySem = (n) => y.steps.filter((s) => (s.sem ?? 0) === n);
+    // 공통 과정 먼저, 선택·보충 과정은 각 칸 아래쪽에
+    const bySem = (n) => y.steps.filter((s) => (s.sem ?? 0) === n)
+      .sort((a, b) => Number(!!a.optional) - Number(!!b.optional));
     const all = bySem(0);
     const semCol = (n) => {
       const steps = bySem(n);
-      return `<div class="sem${steps.length ? "" : " empty"}"><div class="sem-label">${n}학기</div>${
+      return `<div class="sem${steps.length ? "" : " sem-empty"}"><div class="sem-label">${n}학기</div>${
         steps.length ? steps.map(stepHtml).join("") : `<div class="none">-</div>`}</div>`;
     };
     return `
@@ -95,10 +144,12 @@ function renderRoadmap() {
   }).join("");
 
   app.innerHTML = `
+    ${nowBannerHtml()}
     <div class="card">
       <h2 class="page-title">${multiDept() ? "" : esc(DATA.departments[0]?.name ?? "") + " "}학년별 자격증 로드맵</h2>
       <p class="lead">항목을 누르면 자격증 상세 안내로 이동합니다.</p>
-      ${legend ? `<div class="legend">${legend}</div>` : ""}
+      ${legend || hasOptional ? `<div class="legend">${legend}${
+        hasOptional ? `<span class="legend-item legend-optional"><i></i>점선 = 선택·보충 과정</span>` : ""}</div>` : ""}
       <div class="section timeline">${grades}</div>
       <div class="section">
         <h4>3학년 의무검정 추천 종목</h4>

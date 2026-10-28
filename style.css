@@ -209,6 +209,35 @@ a.step:hover { border-color: var(--c); }
 }
 .step small { display: block; color: var(--muted); }
 
+/* 선택·보충 과정 */
+.step.optional { border-style: dashed; border-left-style: dashed; background: transparent; font-size: 13px; }
+.step.optional .step-text { color: var(--muted); }
+.legend-optional i { background: transparent !important; border: 2px dashed var(--muted); width: 10px; height: 10px; }
+
+/* 갈림길 */
+.branches { list-style: none; margin: 6px 0 0; padding: 6px 0 0; border-top: 1px dashed var(--line); font-size: 12px; color: var(--muted); }
+.branches li { padding: 1px 0; }
+.branches b { color: var(--c); font-weight: 700; }
+
+/* 다가오는 시험 일정 */
+.now { display: block; margin-bottom: 12px; border-left: 4px solid var(--primary); }
+.now-title { font-weight: 700; margin-bottom: 4px; }
+.now ul { list-style: none; margin: 0; padding: 0; font-size: 14px; }
+.now li { padding: 2px 0; }
+.badge {
+  display: inline-block;
+  min-width: 44px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 0 6px;
+  margin-right: 8px;
+  border-radius: 4px;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.badge.live { background: #fdeee6; color: #c2410c; }
+
 .page-title { margin: 0; font-size: 22px; }
 .lead { color: var(--muted); margin: 4px 0 0; }
 .muted { color: var(--muted); }
@@ -229,6 +258,6 @@ a.step:hover { border-color: var(--c); }
   .roadmap { grid-template-columns: 1fr; }
   .grade-row { grid-template-columns: 1fr; }
   .sems { grid-template-columns: 1fr; }
-  .sem.empty { display: none; }
+  .sem-empty { display: none; }
   .detail h2 { font-size: 21px; }
 }
