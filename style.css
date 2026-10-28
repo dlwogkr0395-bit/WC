@@ -111,6 +111,7 @@ a.card:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(31, 95, 
 .table { width: 100%; border-collapse: collapse; }
 .table th, .table td { text-align: left; padding: 8px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
 .table th { width: 110px; color: var(--muted); font-weight: 600; }
+.table.wide-th th { width: 40%; color: var(--text); }
 .table tr:last-child th, .table tr:last-child td { border-bottom: 0; }
 
 ul.plain { margin: 0; padding-left: 20px; }
@@ -155,6 +156,59 @@ ul.plain { margin: 0; padding-left: 20px; }
   color: var(--primary);
 }
 
+/* 구분 색상 — legend의 color 값과 이름이 같아야 함 */
+.c-blue   { --c: #1f5fbf; --c-soft: #e8f0fc; }
+.c-green  { --c: #047857; --c-soft: #e3f5ee; }
+.c-indigo { --c: #4338ca; --c-soft: #eceafd; }
+.c-purple { --c: #8b3fb8; --c-soft: #f4eafa; }
+.c-orange { --c: #c2410c; --c-soft: #fdeee6; }
+.c-gray   { --c: #5b6472; --c-soft: #eef0f3; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 12px; font-size: 13px; }
+.legend-item { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.legend-item i { width: 12px; height: 12px; border-radius: 3px; background: var(--c); }
+
+/* 학기별 타임라인 */
+.timeline { display: grid; gap: 12px; }
+.grade-row {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 10px;
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 12px;
+}
+.grade-label { font-weight: 800; font-size: 17px; color: var(--primary); padding-top: 2px; }
+.grade-body { display: grid; gap: 10px; min-width: 0; }
+.sems { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sem-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.all-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px; }
+.sem .none { color: var(--muted); font-size: 13px; }
+
+.step {
+  display: block;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--c);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+.all-steps .step { margin-bottom: 0; }
+a.step:hover { border-color: var(--c); }
+.step .step-type {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 6px;
+  margin-right: 6px;
+  border-radius: 4px;
+  background: var(--c-soft);
+  color: var(--c);
+}
+.step small { display: block; color: var(--muted); }
+
 .page-title { margin: 0; font-size: 22px; }
 .lead { color: var(--muted); margin: 4px 0 0; }
 .muted { color: var(--muted); }
@@ -173,5 +227,8 @@ ul.plain { margin: 0; padding-left: 20px; }
 
 @media (max-width: 600px) {
   .roadmap { grid-template-columns: 1fr; }
+  .grade-row { grid-template-columns: 1fr; }
+  .sems { grid-template-columns: 1fr; }
+  .sem.empty { display: none; }
   .detail h2 { font-size: 21px; }
 }

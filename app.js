@@ -55,29 +55,51 @@ function bindFilters(rerender, listHtml) {
 
 function mandatoryExamHtml() {
   return `
-    <table class="table">
+    <table class="table wide-th">
       ${DATA.mandatoryExam.map((m) => `<tr><th>${esc(m.status)}</th><td>${esc(m.recommend)}${
         m.note ? `<div class="muted small">${esc(m.note)}</div>` : ""}</td></tr>`).join("")}
     </table>`;
 }
 
+const typeColor = (type) => (DATA.legend ?? []).find((l) => l.types.includes(type))?.color ?? "gray";
+
+function stepHtml(s) {
+  const body = `<span class="step-type">${esc(s.type)}</span><span class="step-text">${esc(s.text)}</span>${
+    s.when ? `<small>${esc(s.when)}</small>` : ""}`;
+  const cls = `step c-${esc(typeColor(s.type))}`;
+  return s.cert && certById(s.cert)
+    ? `<a class="${cls}" href="#/certificate/${esc(s.cert)}">${body}</a>`
+    : `<div class="${cls}">${body}</div>`;
+}
+
 function renderRoadmap() {
-  const years = DATA.roadmap.map((y) => `
-    <div class="year">
-      <div class="label">${y.grade}학년</div>
-      ${y.steps.map((s) => {
-        const body = `<span class="step-type">${esc(s.type)}</span>${esc(s.text)}${s.when ? `<small>${esc(s.when)}</small>` : ""}`;
-        return s.cert && certById(s.cert)
-          ? `<a class="item" href="#/certificate/${esc(s.cert)}">${body}</a>`
-          : `<div class="item">${body}</div>`;
-      }).join("")}
-    </div>`).join("");
+  const legend = (DATA.legend ?? [])
+    .map((l) => `<span class="legend-item c-${esc(l.color)}"><i></i>${esc(l.label)}</span>`).join("");
+
+  const grades = DATA.roadmap.map((y) => {
+    const bySem = (n) => y.steps.filter((s) => (s.sem ?? 0) === n);
+    const all = bySem(0);
+    const semCol = (n) => {
+      const steps = bySem(n);
+      return `<div class="sem${steps.length ? "" : " empty"}"><div class="sem-label">${n}학기</div>${
+        steps.length ? steps.map(stepHtml).join("") : `<div class="none">-</div>`}</div>`;
+    };
+    return `
+      <div class="grade-row">
+        <div class="grade-label">${y.grade}학년</div>
+        <div class="grade-body">
+          ${all.length ? `<div class="sem all"><div class="sem-label">학년 전체</div><div class="all-steps">${all.map(stepHtml).join("")}</div></div>` : ""}
+          <div class="sems">${semCol(1)}${semCol(2)}</div>
+        </div>
+      </div>`;
+  }).join("");
 
   app.innerHTML = `
     <div class="card">
       <h2 class="page-title">${multiDept() ? "" : esc(DATA.departments[0]?.name ?? "") + " "}학년별 자격증 로드맵</h2>
       <p class="lead">항목을 누르면 자격증 상세 안내로 이동합니다.</p>
-      <div class="section"><div class="roadmap">${years}</div></div>
+      ${legend ? `<div class="legend">${legend}</div>` : ""}
+      <div class="section timeline">${grades}</div>
       <div class="section">
         <h4>3학년 의무검정 추천 종목</h4>
         ${mandatoryExamHtml()}

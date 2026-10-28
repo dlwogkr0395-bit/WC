@@ -17,41 +17,56 @@ const DATA = {
   ],
 
   // ---------------------------------------------------------------
+  // 로드맵 구분 색상 (범례)
+  //  types에 적힌 구분(type)이 해당 색으로 표시됩니다. 목록에 없는 구분은 회색.
+  //  color: blue / green / indigo / purple / orange / gray
+  // ---------------------------------------------------------------
+  legend: [
+    { label: "수업", color: "blue", types: ["수업", "수업·방과후"] },
+    { label: "방과후", color: "green", types: ["방과후"] },
+    { label: "시험 응시", color: "indigo", types: ["필기", "필기·실기"] },
+    { label: "필기 면제·재도전", color: "purple", types: ["필기 면제", "재도전"] },
+    { label: "의무검정", color: "orange", types: ["의무검정"] },
+    { label: "선급·선택", color: "gray", types: ["선급", "선택", "추가"] },
+  ],
+
+  // ---------------------------------------------------------------
   // 학년별 로드맵 (첫 화면)
   //  cert: 연결할 자격증 id (없으면 null)
-  //  type: 수업 / 방과후 / 선택 / 선급 / 의무검정 등 자유롭게
+  //  type: 위 범례의 구분 중 하나
+  //  sem : 1 = 1학기, 2 = 2학기, 0 = 학기 구분 없음(학년 전체)
   //  when: 짧은 보충 설명 (없으면 "")
   // ---------------------------------------------------------------
   roadmap: [
     {
       grade: 1,
       steps: [
-        { cert: "co2", type: "필기", text: "이산화탄소가스아크용접기능사 필기", when: "2회차 (4월)" },
-        { cert: "co2", type: "수업·방과후", text: "이산화탄소가스아크용접기능사 실기", when: "필기 합격 후 바로 준비" },
-        { cert: "hull-design", type: "필기·실기", text: "선체설계기능사", when: "4회차" },
-        { cert: "class-test", type: "선급", text: "선급시험 3F", when: "2학기 말 (특별반은 1학기 말)" },
+        { sem: 1, cert: "co2", type: "필기", text: "이산화탄소가스아크용접기능사 필기", when: "2회차 (4월)" },
+        { sem: 1, cert: "co2", type: "수업·방과후", text: "이산화탄소가스아크용접기능사 실기", when: "필기 합격 후 바로 준비" },
+        { sem: 2, cert: "hull-design", type: "필기·실기", text: "선체설계기능사", when: "4회차 (필기 9월 · 실기 11월)" },
+        { sem: 2, cert: "class-test", type: "선급", text: "선급시험 3F", when: "2학기 말 (특별반은 1학기 말)" },
       ],
     },
     {
       grade: 2,
       steps: [
-        { cert: "tig", type: "수업", text: "가스텅스텐아크용접기능사", when: "" },
-        { cert: "smaw", type: "방과후", text: "피복아크용접기능사", when: "TIG 취득 시" },
-        { cert: "hull-build", type: "필기 면제", text: "선체건조기능사 실기", when: "3회차 · 선체설계 취득 시" },
-        { cert: "hull-design", type: "재도전", text: "선체설계기능사", when: "4회차 · 1학년 미취득 시" },
-        { cert: "forklift", type: "선택", text: "지게차운전기능사", when: "2학기" },
-        { cert: "class-test", type: "선급", text: "선급시험 3G", when: "" },
+        { sem: 0, cert: "tig", type: "수업", text: "가스텅스텐아크용접기능사", when: "" },
+        { sem: 0, cert: "smaw", type: "방과후", text: "피복아크용접기능사", when: "TIG 취득 시" },
+        { sem: 0, cert: "class-test", type: "선급", text: "선급시험 3G", when: "" },
+        { sem: 2, cert: "hull-build", type: "필기 면제", text: "선체건조기능사 실기", when: "3회차 (8~9월) · 선체설계 취득 시" },
+        { sem: 2, cert: "hull-design", type: "재도전", text: "선체설계기능사", when: "4회차 · 1학년 미취득 시" },
+        { sem: 2, cert: "forklift", type: "선택", text: "지게차운전기능사", when: "" },
       ],
     },
     {
       grade: 3,
       steps: [
-        { cert: "smaw", type: "수업", text: "피복아크용접기능사", when: "2학년 미취득 시" },
-        { cert: "pipe", type: "의무검정", text: "배관기능사", when: "" },
-        { cert: "refrigeration", type: "의무검정", text: "공조냉동기계기능사", when: "" },
-        { cert: "energy", type: "의무검정", text: "에너지관리기능사", when: "" },
-        { cert: null, type: "추가", text: "다른 종목 추가 취득", when: "개인 필기 합격 → 실기 연습 지원" },
-        { cert: "class-test", type: "선급", text: "선급시험 6G", when: "" },
+        { sem: 0, cert: "smaw", type: "수업", text: "피복아크용접기능사", when: "2학년 미취득 시" },
+        { sem: 0, cert: null, type: "추가", text: "다른 종목 추가 취득", when: "개인 필기 합격 → 실기 연습 지원" },
+        { sem: 0, cert: "class-test", type: "선급", text: "선급시험 6G", when: "" },
+        { sem: 1, cert: "pipe", type: "의무검정", text: "배관기능사", when: "의무검정 (6월)" },
+        { sem: 1, cert: "refrigeration", type: "의무검정", text: "공조냉동기계기능사", when: "의무검정 (6월)" },
+        { sem: 1, cert: "energy", type: "의무검정", text: "에너지관리기능사", when: "의무검정 (6월)" },
       ],
     },
   ],
