@@ -334,6 +334,14 @@ function renderCertificate(id) {
         <ul class="plain">${c.howto.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>
       </div>` : ""}
 
+      ${(c.sections ?? []).map((sec) => `
+      <div class="section">
+        <h4>${esc(sec.title)}</h4>
+        <table class="table auto-th">
+          ${sec.rows.map((r) => `<tr><th>${esc(r.label)}</th><td>${esc(r.value)}</td></tr>`).join("")}
+        </table>
+      </div>`).join("")}
+
       ${c.notes?.length ? `
       <div class="section">
         <h4>참고 사항</h4>
